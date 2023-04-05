@@ -1,8 +1,6 @@
 import { mySqlConnection } from "../mySqlConnection.js";
-import { Connect } from "../connections/sqlConnect.js";
-import { Disconnect } from "../connections/sqlDisonnect.js";
 import bcrypt from "bcryptjs";
-import jwt from "jwt";
+import jwt from "jsonwebtoken";
 import nodemailer from "nodemailer";
 
 // User Registration
@@ -11,6 +9,7 @@ export const Register = async (req, res) => {
 	// Getting the necessary data from the body of the request
 
 	const { userName, email, password, passwordCheck } = req.body;
+	console.log(req.body);
 
 	// Error handling
 
@@ -24,7 +23,7 @@ export const Register = async (req, res) => {
 		return res
 			.status(400)
 			.json({ message: "Password must contain 5 characters or more!" });
-	} else if (password === passwordCheck) {
+	} else if (password !== passwordCheck) {
 		// Check if both the passwords match
 
 		return res.status(400).json({
@@ -32,7 +31,7 @@ export const Register = async (req, res) => {
 		});
 	}
 
-	const salt = bcrypt.genSalt();
+	const salt = await bcrypt.genSalt();
 	const passwordHash = await bcrypt.hash(password, salt);
 
 	// Try Catch
@@ -40,37 +39,30 @@ export const Register = async (req, res) => {
 	try {
 		// Establish a connection MySql
 
-		Connect();
-
 		// Querying into the MySql database
 		mySqlConnection.query(
 			"SELECT * FROM users WHERE email = ?",
 			[email],
 			(err, result) => {
 				if (!err && result.length > 0) {
-					res.status(200).json({
+					return res.status(200).json({
 						message: `An account with the Email: ${email} already exists!`,
-						err: err ? err : null,
 					});
-					Disconnect();
-					return;
+				} else if (err) {
+					return res.status(200).json({ message: err.message });
 				} else {
 					mySqlConnection.query(
 						"INSERT INTO users (email, UserName, Password) VALUES (?, ?, ?)",
 						[email, userName, passwordHash],
 						(error, result) => {
-							if (!error && result.length > 0) {
-								res.status(200).json({
-									message: "Account Successfully Created!",
-								});
-								Disconnect();
-								return;
+							if (!error && result.affectedRows >= 0) {
+								console.log("HEre");
+								return res
+									.status(200)
+									.json({ message: "Account Successfully Created!" });
 							} else {
-								res.status(500).json({
-									message: error.message,
-								});
-								Disconnect();
-								return;
+								console.log("HEre");
+								return res.status(500).json({ message: error });
 							}
 						}
 					);

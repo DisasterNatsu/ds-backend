@@ -8,6 +8,7 @@ import getComicRoutes from "./routes/getComicRoutes.js";
 import getChapterRoutes from "./routes/getChpaters.js";
 import postChapterRoutes from "./routes/postChaptersRoutes.js";
 import postComicRoutes from "./routes/postComicRoutes.js";
+import userRoutes from "./routes/userRoutes.js";
 import B2 from "backblaze-b2";
 
 const app = express();
@@ -39,6 +40,7 @@ app.use("/comics", getComicRoutes);
 app.use("/chapters", getChapterRoutes);
 app.use("/postChapter", postChapterRoutes);
 app.use("/postComic", postComicRoutes);
+app.use("/user", userRoutes);
 
 const PORT = process.env.port || 4000;
 
