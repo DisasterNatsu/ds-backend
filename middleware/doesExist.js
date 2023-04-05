@@ -25,11 +25,11 @@ export const doesExist = async (req, res, next) => {
 	// Checking if the Comic's cover Image exists
 
 	mySqlConnection.query(
-		"SELECT * FROM comics WHERE ComicTitle = ?",
+		"SELECT CoverImage FROM comics WHERE ComicTitle = ?",
 		[comicTitle],
 		(err, result) => {
 			if (!err && result.length > 0) {
-				if (req.path === "/new") {
+				if (req.path === "/change-cover") {
 					req.ImageId = result[0].CoverImage;
 				}
 

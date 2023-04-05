@@ -2,21 +2,23 @@ import fs from "fs";
 import B2 from "backblaze-b2";
 import path from "path";
 import dotenv from "dotenv";
+import { v4 as uuidv4 } from "uuid";
 
 dotenv.config();
 
 export const uploadToBackBlaze = async (req, res, next) => {
-	console.log("I'm here uploading to Backblaze");
+	// Defining backblaze masterkey and application key
 
 	const b2 = new B2({
 		applicationKeyId: process.env.BACKBLAZE_ACCOUNT_ID,
 		applicationKey: process.env.BACKBLAZE_MASTER_APPLICATION_ID,
 	});
 
-	const __dirname = path.resolve();
-	let tempDir = path.join(__dirname, "chapterTemp");
+	const __dirname = path.resolve(); // Defining directory
+	let tempDir = path.join(__dirname, "chapterTemp"); // the temp directory
 
-	const imageIds = [];
+	const imageIds = []; // Empty array where the file IDs will be pushed
+
 	try {
 		b2.authorize().then(async () => {
 			const bucketId = process.env.BACKBLAZE_BUCKET_ID;
@@ -28,10 +30,16 @@ export const uploadToBackBlaze = async (req, res, next) => {
 					return;
 				}
 
+				// Unique id
+
+				let uid = uuidv4();
+
+				// Reading file from temp Dir and upload to backblaze
+
 				const uploadPromises = files.map(async (file) => {
 					const fileData = fs.readFileSync(path.join(tempDir, file));
-					const uploadFileName = path.join(file);
-					const uploadUrl = await b2.getUploadUrl(bucketId);
+					const uploadFileName = path.join(uid, file); // changing file name to uniques
+					const uploadUrl = await b2.getUploadUrl(bucketId); // Getting upload URL and auth token
 					const response = await b2.uploadFile({
 						uploadUrl: uploadUrl.data.uploadUrl,
 						uploadAuthToken: uploadUrl.data.authorizationToken,
@@ -50,7 +58,6 @@ export const uploadToBackBlaze = async (req, res, next) => {
 			});
 		});
 	} catch (error) {
-		console.log(error);
 		return res.status(500).json({ message: error.message });
 	}
 };

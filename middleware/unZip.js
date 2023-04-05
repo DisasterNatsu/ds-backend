@@ -1,6 +1,5 @@
 import decompress from "decompress";
 import fs from "fs";
-import { v4 as uuidv4 } from "uuid";
 import path from "path";
 
 export const unZip = (req, res, next) => {
@@ -19,7 +18,7 @@ export const unZip = (req, res, next) => {
 
 	const unZipFiles = decompress(originPath, dist, {
 		map: (file) => {
-			file.path = uuidv4() + "-" + file.path;
+			file.path = file.path;
 
 			return file;
 		},

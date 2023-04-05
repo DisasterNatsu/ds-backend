@@ -9,7 +9,6 @@ export const Register = async (req, res) => {
 	// Getting the necessary data from the body of the request
 
 	const { userName, email, password, passwordCheck } = req.body;
-	console.log(req.body);
 
 	// Error handling
 
@@ -71,5 +70,61 @@ export const Register = async (req, res) => {
 		);
 	} catch (error) {
 		res.status(500).json({ message: error.message });
+	}
+};
+
+export const LogIn = async (req, res) => {
+	// Getting The Email or UserName and Password
+
+	const { email, password } = req.body;
+
+	// If email or password was not provided
+
+	if (!email || !password) {
+		return res
+			.status(401)
+			.json({ message: "Email or Password was not provided!" });
+	}
+
+	// Try Catch
+
+	try {
+		mySqlConnection.query(
+			"SELECT * FROM users WHERE email = ?",
+			email,
+			async (err, result) => {
+				if (err || result.length === 0) {
+					return res.status(500).json({
+						message: "No account with this Email Address is Registered",
+					});
+				}
+
+				const confirmation = await bcrypt.compare(password, result[0].Password);
+
+				if (confirmation === true) {
+					const token = jwt.sign(
+						{
+							email: result[0].email,
+						},
+						process.env.USER_JWT_PASSWORD,
+						{
+							expiresIn: "5h",
+						}
+					);
+
+					return res.status(200).json({
+						authToken: token,
+						email: result[0].email,
+						UserName: result[0].UserName,
+					});
+				}
+
+				return res
+					.status(400)
+					.json({ message: "Incorrect Email or Password!" });
+			}
+		);
+	} catch (error) {
+		return res.status(500).json({ message: error.message });
 	}
 };
