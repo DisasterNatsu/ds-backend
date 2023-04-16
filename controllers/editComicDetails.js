@@ -1,6 +1,14 @@
 import { mySqlConnection } from "../mySqlConnection.js";
 
 export const editDetails = (req, res) => {
+	// Check if the comic exists
+
+	const doesExist = req.exists;
+
+	if (doesExist === false) {
+		return res.status(401).json({ message: "Such comic doesn't exist" });
+	}
+
 	// Defining Necessary Data
 	const { id, comicTitle, description, author, artist, origin, tags } =
 		req.body;

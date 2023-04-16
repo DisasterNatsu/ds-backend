@@ -63,7 +63,7 @@ export const coverChange = async (req, res, next) => {
 					await Promise.all(uploadPromises); // Waiting for all promises to be fulfilled in the function uploadPromises
 
 					// New cover Image Id
-					req.newCover = imageIds;
+					req.newCover = imageIds[0];
 					return next();
 				});
 			}

@@ -1,9 +1,6 @@
 import fs from "fs";
 import B2 from "backblaze-b2";
 import path from "path";
-import dotenv from "dotenv";
-
-dotenv.config();
 
 export const uploadToBackBlaze = async (req, res, next) => {
 	const __dirname = path.resolve();
@@ -59,14 +56,13 @@ export const uploadToBackBlaze = async (req, res, next) => {
 
 				await Promise.all(uploadPromises);
 
-				req.image = reqfiles;
+				req.image = reqfiles[0];
 
 				fs.rmSync(filePath, { recursive: true });
 				next();
 			});
 		})
 		.catch((err) => {
-			console.error(err);
-			res.sendStatus(500);
+			return res.status(500).json({ message: err.message });
 		});
 };
