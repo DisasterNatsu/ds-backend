@@ -30,7 +30,7 @@ export const postComic = (req, res) => {
 		// Inserting the new comic into database
 
 		mySqlConnection.query(
-			"INSERT INTO comic (id, ComicTitle, Author, Artist, Tags, CoverImage, date, description, status, origin) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+			"INSERT INTO comic (id, ComicTitle, Author, Artist, Tags, CoverImage, Date, Description, Status, Origin) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
 			[
 				id,
 				comicTitle,
