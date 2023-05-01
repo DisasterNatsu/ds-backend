@@ -3,66 +3,60 @@ import B2 from "backblaze-b2";
 import path from "path";
 
 export const uploadToBackBlaze = async (req, res, next) => {
-	const __dirname = path.resolve();
-	let tempDir = path.join(__dirname, "temp");
+  console.log(req.body);
 
-	const filePath = path.join(tempDir, req.file.filename); // Getting the File Path
+  const __dirname = path.resolve();
+  let tempDir = path.join(__dirname, "temp");
 
-	// If the comic with the same name already exists
+  const filePath = path.join(tempDir, req.file.filename); // Getting the File Path
 
-	if (req.exists && req.exists === true && req.path === "/new") {
-		// Deleting the Image from Local Storage
+  const b2 = new B2({
+    applicationKeyId: process.env.BACKBLAZE_MASTER_APPLICATION_KEY_ID,
+    applicationKey: process.env.BACKBLAZE_MASTER_APPLICATION_ID,
+  });
 
-		fs.rmSync(filePath, { recursive: true });
+  let reqfiles = [];
+  try {
+    await b2
+      .authorize()
+      .then(async () => {
+        // Will be called when uploading a new chapter or changing cover
 
-		// Returning the response
+        const bucketId = process.env.BACKBLAZE_BUCKET_ID;
 
-		return res.status(200).json({ message: "The Comic already exists!" });
-	}
+        fs.readdir(tempDir, async function (err, files) {
+          if (err) {
+            console.error(err);
+            res.sendStatus(500).json({ message: err.message });
+            return;
+          }
 
-	const b2 = new B2({
-		applicationKeyId: process.env.BACKBLAZE_ACCOUNT_ID,
-		applicationKey: process.env.BACKBLAZE_MASTER_APPLICATION_ID,
-	});
+          const uploadPromises = files.map(async (file) => {
+            const fileData = fs.readFileSync(path.join(tempDir, file));
+            const uploadFileName = path.join(file);
+            const uploadUrl = await b2.getUploadUrl(bucketId);
+            const response = await b2.uploadFile({
+              uploadUrl: uploadUrl.data.uploadUrl,
+              uploadAuthToken: uploadUrl.data.authorizationToken,
+              filename: uploadFileName,
+              data: fileData,
+              mime: "image/png" || "image/jpg" || "image/jpeg" || "image/webp", // replace with the appropriate MIME type for your files
+            });
+            reqfiles.push(response.data.fileId);
+          });
 
-	let reqfiles = [];
+          await Promise.all(uploadPromises);
 
-	b2.authorize()
-		.then(async () => {
-			// Will be called when uploading a new chapter or changing cover
+          req.image = reqfiles[0];
 
-			const bucketId = process.env.BACKBLAZE_BUCKET_ID;
-
-			fs.readdir(tempDir, async function (err, files) {
-				if (err) {
-					console.error(err);
-					res.sendStatus(500).json({ message: err.message });
-					return;
-				}
-
-				const uploadPromises = files.map(async (file) => {
-					const fileData = fs.readFileSync(path.join(tempDir, file));
-					const uploadFileName = path.join(file);
-					const uploadUrl = await b2.getUploadUrl(bucketId);
-					const response = await b2.uploadFile({
-						uploadUrl: uploadUrl.data.uploadUrl,
-						uploadAuthToken: uploadUrl.data.authorizationToken,
-						filename: uploadFileName,
-						data: fileData,
-						mime: "image/png" || "image/jpg" || "image/jpeg" || "image/webp", // replace with the appropriate MIME type for your files
-					});
-					reqfiles.push(response.data.fileId);
-				});
-
-				await Promise.all(uploadPromises);
-
-				req.image = reqfiles[0];
-
-				fs.rmSync(filePath, { recursive: true });
-				next();
-			});
-		})
-		.catch((err) => {
-			return res.status(500).json({ message: err.message });
-		});
+          fs.rmSync(filePath, { recursive: true });
+          next();
+        });
+      })
+      .catch((err) => {
+        return res.status(500).json({ message: err });
+      });
+  } catch (error) {
+    console.log(error);
+  }
 };

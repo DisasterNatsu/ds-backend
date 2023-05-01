@@ -10,7 +10,7 @@ import { comicStatusChange } from "../controllers/comicStatus.js";
 
 const Router = express.Router();
 
-Router.post("/new", CoversUpload, doesExist, uploadToBackBlaze, postComic);
+Router.post("/new", CoversUpload, uploadToBackBlaze, postComic);
 Router.post("/change-cover", CoversUpload, doesExist, coverChange, editCover);
 Router.post("/edit-details", doesExist, editDetails);
 Router.post("/status-change", doesExist, comicStatusChange);

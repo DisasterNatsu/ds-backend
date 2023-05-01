@@ -9,7 +9,9 @@ import getChapterRoutes from "./routes/getChpaters.js";
 import postChapterRoutes from "./routes/postChaptersRoutes.js";
 import postComicRoutes from "./routes/postComicRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
+import adminRoutes from "./routes/adminRoutes.js";
 import B2 from "backblaze-b2";
+import axios from "axios";
 
 const app = express();
 
@@ -18,22 +20,22 @@ app.use("/public", express.static("./public"));
 dotenv.config();
 
 app.use(
-	bodyParser.json({
-		limit: "100mb",
-		extended: true,
-	})
+  bodyParser.json({
+    limit: "100mb",
+    extended: true,
+  })
 );
 app.use(
-	bodyParser.urlencoded({
-		limit: "100mb",
-		extended: true,
-	})
+  bodyParser.urlencoded({
+    limit: "100mb",
+    extended: true,
+  })
 );
 app.use(express.json());
 app.use(cors());
 
 app.get("/", (req, res) => {
-	res.send("Hello!");
+  res.send("Hello!");
 });
 
 app.use("/comics", getComicRoutes);
@@ -41,15 +43,16 @@ app.use("/chapters", getChapterRoutes);
 app.use("/postChapter", postChapterRoutes);
 app.use("/postComic", postComicRoutes);
 app.use("/user", userRoutes);
+app.use("/admin", adminRoutes);
 
-const PORT = process.env.port || 4000;
+const PORT = process.env.port || 5000;
 
 const connection = Connect();
 
 if (connection) {
-	app.listen(PORT, () => console.log(`Server is running on ${PORT}`));
+  app.listen(PORT, () => console.log(`Server is running on ${PORT}`));
 } else {
-	console.log("Couldn't establish connection with MySql local Server!");
+  console.log("Couldn't establish connection with MySql local Server!");
 }
 
 // app.post("/upload", upload.single("file"), function (req, res) {
