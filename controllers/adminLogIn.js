@@ -103,7 +103,7 @@ export const LogIn = (req, res) => {
     }
     // Authentication
     mySqlConnection.query(
-      "SELECT * FROM admin WHERE email = ?",
+      "SELECT * FROM admin WHERE Email = ?",
       email,
       async (error, result) => {
         if (error) {
@@ -111,6 +111,7 @@ export const LogIn = (req, res) => {
         }
 
         if (result.length > 0) {
+          console.log(result);
           try {
             const isMatch = await bcrypt.compare(password, result[0].Password);
 

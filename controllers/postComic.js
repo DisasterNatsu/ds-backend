@@ -1,59 +1,84 @@
 import { mySqlConnection } from "../mySqlConnection.js";
+import uniqueRandom from "unique-random";
 
 export const postComic = (req, res) => {
-	// See if it exists
+  // Getting data from the req.body
 
-	const doesExist = req.exists;
+  let {
+    comicTitle,
+    description,
+    origin,
+    status,
+    genres,
+    author,
+    artist,
+    badge,
+  } = req.body;
 
-	if (doesExist === true) {
-		return res
-			.status(200)
-			.json({ message: "A comic with the same name already exists!" });
-	}
+  const coverImage = req.image;
 
-	// Getting data from the req.body
+  console.log(coverImage);
 
-	let { comicTitle, description, origin, status, author, artist, tags, date } =
-		req.body;
+  // Error handling
 
-	const coverImage = req.image;
+  if (!comicTitle || !description || !origin || !status || !genres) {
+    return res
+      .status(401)
+      .json({ message: "Necessary data was not provided!" });
+  }
 
-	// Error handling
+  const date = new Date();
 
-	if (!comicTitle || !description || !origin || !status || !tags || !date) {
-		return res
-			.status(401)
-			.json({ message: "Necessary data was not provided!" });
-	}
+  const random = uniqueRandom(11111, 99999);
 
-	try {
-		// Inserting the new comic into database
+  let id = random();
 
-		mySqlConnection.query(
-			"INSERT INTO comic (id, ComicTitle, Author, Artist, Tags, CoverImage, Date, Description, Status, Origin) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-			[
-				id,
-				comicTitle,
-				author,
-				artist,
-				tags,
-				coverImage,
-				date,
-				description,
-				status,
-				origin,
-			],
-			(err, result) => {
-				if (!err && result.length > 0) {
-					return res
-						.status(200)
-						.json({ message: "Comic uploaded successfully" });
-				} else {
-					return res.status(500).json({ message: err.message });
-				}
-			}
-		);
-	} catch (error) {
-		return res.status(500).json({ message: error.message });
-	}
+  try {
+    // Checking if the comic Exists
+
+    mySqlConnection.query(
+      "SELECT id FROM comics WHERE ComicTitle = ?",
+      comicTitle,
+      (err, result) => {
+        if (!err && result.length > 0) {
+          return res
+            .status(200)
+            .json({
+              message: `A Comic with the name ${comicTitle} already exists!`,
+            });
+        } else {
+          mySqlConnection.query(
+            "INSERT INTO comics (id, ComicTitle, Description, CoverImage, Origin, Status, Genres, Author, Artist, Badges) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+            [
+              id,
+              comicTitle,
+              description,
+              coverImage,
+              origin,
+              status,
+              genres,
+              author,
+              artist,
+              badge,
+            ],
+            (err, result) => {
+              if (!err && result.affectedRows > 0) {
+                return res
+                  .status(200)
+                  .json({ message: "Comic uploaded successfully" });
+              } else {
+                console.log(err);
+                return res.status(500).json({ message: err });
+              }
+            }
+          );
+        }
+      }
+    );
+
+    // Inserting the new comic into database
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ message: error });
+  }
 };

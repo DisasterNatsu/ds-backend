@@ -3,12 +3,8 @@ import B2 from "backblaze-b2";
 import path from "path";
 
 export const uploadToBackBlaze = async (req, res, next) => {
-  console.log(req.body);
-
   const __dirname = path.resolve();
   let tempDir = path.join(__dirname, "temp");
-
-  const filePath = path.join(tempDir, req.file.filename); // Getting the File Path
 
   const b2 = new B2({
     applicationKeyId: process.env.BACKBLAZE_MASTER_APPLICATION_KEY_ID,
@@ -26,7 +22,7 @@ export const uploadToBackBlaze = async (req, res, next) => {
 
         fs.readdir(tempDir, async function (err, files) {
           if (err) {
-            console.error(err);
+            console.error(err.message);
             res.sendStatus(500).json({ message: err.message });
             return;
           }
@@ -49,7 +45,7 @@ export const uploadToBackBlaze = async (req, res, next) => {
 
           req.image = reqfiles[0];
 
-          fs.rmSync(filePath, { recursive: true });
+          fs.rmdirSync(tempDir, { recursive: true });
           next();
         });
       })
@@ -57,6 +53,6 @@ export const uploadToBackBlaze = async (req, res, next) => {
         return res.status(500).json({ message: err });
       });
   } catch (error) {
-    console.log(error);
+    console.log(error.message);
   }
 };
