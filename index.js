@@ -17,12 +17,6 @@ app.use("/public", express.static("./public"));
 dotenv.config();
 
 app.use(
-  bodyParser.json({
-    limit: "100mb",
-    extended: true,
-  })
-);
-app.use(
   bodyParser.urlencoded({
     limit: "100mb",
     extended: true,
@@ -49,5 +43,5 @@ const connection = Connect();
 if (connection) {
   app.listen(PORT, () => console.log(`Server is running on ${PORT}`));
 } else {
-  console.log("Couldn't establish connection with MySql local Server!");
+  console.log("Couldn't establish connection with MySql Server!");
 }

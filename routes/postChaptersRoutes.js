@@ -3,9 +3,17 @@ import ChapterMiddleWare from "../middleware/chapterUpload.js";
 import { unZip } from "../middleware/unZip.js";
 import { postChapter } from "../controllers/postChapter.js";
 import { uploadToBackBlaze } from "../middleware/backblazeChapter.js";
+import { adminAuth } from "../middleware/adminAuth.js";
 
 const Router = express.Router();
 
-Router.post("/", ChapterMiddleWare, unZip, uploadToBackBlaze, postChapter);
+Router.post(
+  "/",
+  adminAuth,
+  ChapterMiddleWare,
+  unZip,
+  uploadToBackBlaze,
+  postChapter
+);
 
 export default Router;

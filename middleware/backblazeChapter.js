@@ -53,7 +53,7 @@ export const uploadToBackBlaze = async (req, res, next) => {
 
         await Promise.all(uploadPromises);
 
-        req.imageIds = imageIds;
+        req.imageIds = imageIds.toString();
         next();
       });
     });

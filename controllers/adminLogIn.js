@@ -9,7 +9,7 @@ export const AdminAuthjwt = (req, res, next) => {
     const token = req.header("ds-admin-auth");
 
     if (!token) {
-      return res.status(401).json({ message: "Not Authorised" });
+      return res.status(200).json({ message: "Not Authorised" });
     }
 
     const verified = jwt.verify(token, process.env.ADMIN_JWT_PASSWORD);
@@ -111,7 +111,6 @@ export const LogIn = (req, res) => {
         }
 
         if (result.length > 0) {
-          console.log(result);
           try {
             const isMatch = await bcrypt.compare(password, result[0].Password);
 

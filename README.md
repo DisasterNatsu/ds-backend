@@ -6,7 +6,9 @@ CREATE TABLE comics(id varchar(255) NOT NULL, ComicTitle varchar(255) NOT NULL, 
 
 ## Chapters Table Code
 
-`CREATE TABLE chapters(id INT NOT NULL, ComicTitle varchar(255) NOT NULL, ChapterNumber varchar(255) NOT NULL, ChapterName varchar(255), Pages LONGTEXT NOT NULL, Date varchar(255) NOT NULL);`
+```
+CREATE TABLE chapters(id INT NOT NULL, ComicTitle varchar(255), comicID varchar(255), ChapterNumber varchar(255) NOT NULL, ChapterName varchar(255), pages LONGTEXT NOT NULL, Date datetime default current_timestamp, Primary Key(id));
+```
 
 ## Users Table Code
 

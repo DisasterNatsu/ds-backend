@@ -5,12 +5,12 @@ import { mySqlConnection } from "../mySqlConnection.js";
 export const doesExist = async (req, res, next) => {
   const comicTitle = req.body.comicTitle;
 
+  console.log(req);
+
   // Checking if the Body Title was provided
 
   if (!comicTitle) {
-    return res
-      .status(500)
-      .json({ message: "The Comic Title or the Comic Id was not provided!" });
+    return res.status(500).json({ message: "The Comic Title or the Comic!" });
   }
 
   // Checking if the Comic's cover Image exists
@@ -20,15 +20,10 @@ export const doesExist = async (req, res, next) => {
     [comicTitle],
     (err, result) => {
       if (!err && result.length > 0) {
-        if (req.path === "/change-cover") {
-          req.ImageId = result[0].CoverImage;
-        }
-
-        req.exists = true;
-        return next();
+        return res.status(200).json({
+          message: `A comic with the name ${comicTitle} already exists!`,
+        });
       } else {
-        req.exists = false;
-
         return next();
       }
     }

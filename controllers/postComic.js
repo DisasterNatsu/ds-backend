@@ -27,7 +27,7 @@ export const postComic = (req, res) => {
       .json({ message: "Necessary data was not provided!" });
   }
 
-  const date = new Date();
+  // Generating ID
 
   const random = uniqueRandom(11111, 99999);
 
@@ -41,11 +41,9 @@ export const postComic = (req, res) => {
       comicTitle,
       (err, result) => {
         if (!err && result.length > 0) {
-          return res
-            .status(200)
-            .json({
-              message: `A Comic with the name ${comicTitle} already exists!`,
-            });
+          return res.status(200).json({
+            message: `A Comic with the name ${comicTitle} already exists!`,
+          });
         } else {
           mySqlConnection.query(
             "INSERT INTO comics (id, ComicTitle, Description, CoverImage, Origin, Status, Genres, Author, Artist, Badges) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
