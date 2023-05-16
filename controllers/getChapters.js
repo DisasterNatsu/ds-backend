@@ -16,13 +16,11 @@ export const allChapters = (req, res) => {
     // Querying to the Database
 
     mySqlConnection.query(
-      "SELECT chapterNumber, ChapterName, date FROM chapters WHERE ComicTitle = ? and comicID = ? ORDER BY chapterNumber DESC",
+      "SELECT chapterID, chapterNumber, ChapterName, chapterDate FROM chapters WHERE ComicTitle = ? and comicID = ? ORDER BY chapterNumber DESC",
       [comicName, id],
       (error, result) => {
         if (!error && result.length > 0) {
-          res.status(200).json(result);
-
-          return;
+          return res.status(200).json(result);
         } else {
           return res
             .status(200)
@@ -53,8 +51,8 @@ export const ChapterPages = (req, res) => {
 
   // Comic Name and Chapter Number for use in database
 
-  const reqName = change(comicTitle);
-  const chapterNumber = number[1];
+  const { id, comicName } = change(comicTitle, true);
+  const { chapterId, chptNum } = change(number, false);
 
   // Try Catch
 
@@ -62,13 +60,14 @@ export const ChapterPages = (req, res) => {
     // Sending Query to the database
 
     mySqlConnection.query(
-      "SELECT * FROM chapters WHERE ComicTitle = ? AND chapterNumber = ?",
-      [reqName, chapterNumber],
+      "SELECT * FROM chapters WHERE ComicTitle = ? AND comicID = ? AND chapterID = ? AND ChapterNumber = ?",
+      [comicName, id, chapterId, chptNum],
       (error, result) => {
         if (!error && result.length > 0) {
-          return res.status(200).json(result);
+          return res.status(200).json(result[0]);
         } else {
-          res.status(200).json({ message: error.message });
+          console.log("Here");
+          res.status(200).json({ message: "Not Found" });
 
           return;
         }

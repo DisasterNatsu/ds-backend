@@ -28,6 +28,7 @@
     "nodemailer-mailgun-transport": "^2.1.5",
     "nodemon": "^2.0.22",
     "random": "^4.1.0",
+    "sharp": "^0.32.1",
     "socket.io": "^4.6.1",
     "unique-random": "^3.0.0",
     "uuid": "^9.0.0"

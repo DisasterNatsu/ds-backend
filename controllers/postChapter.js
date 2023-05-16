@@ -4,11 +4,14 @@ import uniqueRandom from "unique-random";
 
 export const postChapter = async (req, res) => {
   const { comicTitle, chapterNumber, chapterName, comicID } = req.body;
-  const imageIds = req.imageIds;
+  const imageIds = JSON.stringify(req.imageIds);
+
+  console.log(imageIds);
 
   if (!comicTitle || !chapterNumber || !comicID) {
     return res.status(500).json({
-      message: "Comic Title or Chapter Number or Comic ID was not provided",
+      message:
+        "Comic Title or Chapter Number or Comic ID or Comic Cover Image was not provided",
     });
   } else if (!chapterName) {
     chapterName = null;
@@ -33,7 +36,7 @@ export const postChapter = async (req, res) => {
         });
       } else {
         mySqlConnection.query(
-          "INSERT INTO chapters (id, ComicTitle, chapterNumber, ChapterName, Pages, comicID) VALUES (?, ?, ?, ?, ?, ?)",
+          "INSERT INTO chapters (chapterID, ComicTitle, chapterNumber, ChapterName, Pages, comicID) VALUES (?, ?, ?, ?, ?, ?)",
           [id, comicTitle, number, chapterName, imageIds, comicID],
           (err, result) => {
             if (!err && result.affectedRows > 0) {
@@ -42,7 +45,7 @@ export const postChapter = async (req, res) => {
                 .json({ message: "Chapter uploaded successfully!" });
             } else {
               console.log(err);
-              return res.status(500).json({ message: err });
+              return res.status(500).json({ message: err.message });
             }
           }
         );

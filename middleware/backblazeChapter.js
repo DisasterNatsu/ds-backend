@@ -48,16 +48,17 @@ export const uploadToBackBlaze = async (req, res, next) => {
             mime: "image/png" || "image/jpg" || "image/jpeg" || "image/webp", // replace with the appropriate MIME type for your files
           });
 
-          imageIds.push(response.data.fileId);
+          return response.data.fileId;
         });
 
-        await Promise.all(uploadPromises);
+        fs.rmdirSync(tempDir, { recursive: true }); // Removing Files From Temp Dir
 
-        req.imageIds = imageIds.toString();
+        req.imageIds = await Promise.all(uploadPromises);
         next();
       });
     });
   } catch (error) {
+    fs.rmdirSync(tempDir, { recursive: true }); // Removing Files From Temp Directory
     return res.status(500).json({ message: error.message });
   }
 };
