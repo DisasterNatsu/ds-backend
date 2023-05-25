@@ -9,6 +9,7 @@ import postChapterRoutes from "./routes/postChaptersRoutes.js";
 import postComicRoutes from "./routes/postComicRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
 import adminRoutes from "./routes/adminRoutes.js";
+import sitemapRoutes from "./routes/sitemapRoutes.js";
 
 const app = express();
 
@@ -35,6 +36,7 @@ app.use("/postChapter", postChapterRoutes);
 app.use("/postComic", postComicRoutes);
 app.use("/user", userRoutes);
 app.use("/admin", adminRoutes);
+app.use("/sitemap", sitemapRoutes);
 
 const PORT = process.env.port || 8000;
 

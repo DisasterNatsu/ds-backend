@@ -17,8 +17,6 @@ export const postComic = (req, res) => {
 
   const coverImage = req.image;
 
-  console.log(coverImage);
-
   // Error handling
 
   if (!comicTitle || !description || !origin || !status || !genres) {
@@ -29,7 +27,7 @@ export const postComic = (req, res) => {
 
   // Generating ID
 
-  const random = uniqueRandom(11111, 99999);
+  const random = uniqueRandom(10000, 99999);
 
   let id = random();
 
@@ -73,8 +71,6 @@ export const postComic = (req, res) => {
         }
       }
     );
-
-    // Inserting the new comic into database
   } catch (error) {
     console.log(error);
     return res.status(500).json({ message: error });

@@ -15,9 +15,7 @@ export const uploadToBackBlaze = async (req, res, next) => {
   });
 
   const __dirname = path.resolve(); // Defining directory
-  let tempDir = path.join(__dirname, "chapterTemp"); // the temp directory
-
-  const imageIds = []; // Empty array where the file IDs will be pushed
+  let tempDir = path.join(__dirname, "processed"); // the temp directory
 
   try {
     await b2.authorize().then(async () => {
@@ -51,14 +49,14 @@ export const uploadToBackBlaze = async (req, res, next) => {
           return response.data.fileId;
         });
 
-        fs.rmdirSync(tempDir, { recursive: true }); // Removing Files From Temp Dir
-
         req.imageIds = await Promise.all(uploadPromises);
+
+        fs.rmdirSync(tempDir, { recursive: true }); // Removing Files From Temp Dir
         next();
       });
     });
   } catch (error) {
-    fs.rmdirSync(tempDir, { recursive: true }); // Removing Files From Temp Directory
+    fs.rmdirSync(tempDir, { recursive: true }); // Removing Files From Temp Dir
     return res.status(500).json({ message: error.message });
   }
 };

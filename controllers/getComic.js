@@ -82,3 +82,17 @@ export const comicWithlastTwo = (req, res) => {
     }
   );
 };
+
+export const searchComics = (req, res) => {
+  mySqlConnection.query(
+    "SELECT id, ComicTitle, CoverImage, Date FROM comics",
+    (err, result) => {
+      if (!err && result.length > 0) {
+        return res.status(200).json(result);
+      } else {
+        console.log(err);
+        return res.status(404).json({ message: "No Comics Found" });
+      }
+    }
+  );
+};

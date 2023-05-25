@@ -12,4 +12,6 @@ CREATE TABLE chapters(id INT NOT NULL, ComicTitle varchar(255), comicID varchar(
 
 ## Users Table Code
 
-`Create Table users(id INT NOT NULL AUTO_INCREMENT, Email varchar(100) NOT NULL, UserName varchar(100) NOT NULL, Password varchar(255) NOT NULL);`
+```
+Create Table users(id INT NOT NULL AUTO_INCREMENT, Email varchar(100) NOT NULL, UserName varchar(100) NOT NULL, Password varchar(255) NOT NULL);
+```
