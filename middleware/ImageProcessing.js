@@ -25,7 +25,6 @@ export const ProcessImages = (req, res, next) => {
       files.map((file) => {
         const fileDir = path.join(tempDir, file);
         const fileNameWithoutExtention = file.split(".")[0];
-        console.log(fileNameWithoutExtention);
 
         const formatImage = () => {
           sharp(fileDir).toFile(
@@ -34,8 +33,6 @@ export const ProcessImages = (req, res, next) => {
         };
         return formatImage();
       });
-
-      fs.rmdirSync(tempDir, { recursive: true });
 
       next();
     });

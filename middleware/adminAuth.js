@@ -3,6 +3,8 @@ import jwt from "jsonwebtoken";
 export const adminAuth = (req, res, next) => {
   // Getting the token from header
 
+  console.log("herea");
+
   const token = req.header("ds-admin-auth");
 
   try {

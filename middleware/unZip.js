@@ -23,7 +23,7 @@ export const unZip = (req, res, next) => {
       return file;
     },
   }).then((files) => {
-    fs.rmSync(originPath);
+    fs.rmdirSync(dir, { recursive: true });
     next();
   });
 };

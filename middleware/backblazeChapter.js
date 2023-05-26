@@ -16,6 +16,7 @@ export const uploadToBackBlaze = async (req, res, next) => {
 
   const __dirname = path.resolve(); // Defining directory
   let tempDir = path.join(__dirname, "processed"); // the temp directory
+  const inputDir = path.join(__dirname, "chapterTemp");
 
   try {
     await b2.authorize().then(async () => {
@@ -52,6 +53,7 @@ export const uploadToBackBlaze = async (req, res, next) => {
         req.imageIds = await Promise.all(uploadPromises);
 
         fs.rmdirSync(tempDir, { recursive: true }); // Removing Files From Temp Dir
+        fs.rmdirSync(inputDir, { recursive: true });
         next();
       });
     });
