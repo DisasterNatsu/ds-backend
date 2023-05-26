@@ -22,7 +22,7 @@ export const AdminAuthjwt = (req, res, next) => {
         verified.Email,
         (error, response) => {
           if (error) {
-            return res.json(error);
+            return res.json({error: error});
           } else if (response.length > 0) {
             return res.status(200).json({
               UserName: response[0],
@@ -58,16 +58,17 @@ export const Register = async (req, res) => {
       const passwordHash = await bcrypt.hash(password, salt);
 
       mySqlConnection.query(
-        "SELECT * FROM admin WHERE email = ?",
+        "SELECT * FROM admin WHERE Email = ?",
         [email],
         (error, result) => {
-          if (!result.length) {
+          if (!result || !result.length) {
             mySqlConnection.query(
-              "INSERT INTO admin (email, UserName, Password) VALUES (?, ?, ?)",
+              "INSERT INTO admin (Email, UserName, Password) VALUES (?, ?, ?)",
               [email, userName, passwordHash],
               (error) => {
                 if (error) {
                   console.log(error);
+                  res.status(500).json({ message: error.message });
                 } else {
                   res
                     .status(200)
@@ -110,7 +111,7 @@ export const LogIn = (req, res) => {
           res.status(500).json({ message: error.message });
         }
 
-        if (result.length > 0) {
+        if (result && result.length > 0) {
           try {
             const isMatch = await bcrypt.compare(password, result[0].Password);
 

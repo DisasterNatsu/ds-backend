@@ -9,9 +9,11 @@ export const getAllComics = (req, res) => {
       res.status(200).json(rows);
 
       return;
-    } else {
+    } else if (error) {
       res.status(500).json({ error });
-
+      return;
+    } else {
+      res.status(200).json([]);
       return;
     }
   });

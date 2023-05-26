@@ -24,7 +24,7 @@ export const allChapters = (req, res) => {
         } else {
           return res
             .status(200)
-            .json({ message: "There are no Chapters for that comic" });
+            .json([]);
         }
       }
     );
@@ -60,12 +60,14 @@ export const ChapterPages = (req, res) => {
     // Sending Query to the database
 
     mySqlConnection.query(
-      "SELECT C.chapterID, ComicTitle, comicID, ChapterNumber, ChapterName, pages, chapterDate, CoverImage FROM chapters C inner join(select id, CoverImage from comics) Comic on C.comicID = Comic.id WHERE C.ComicTitle = ? AND Comic.id = ? AND C.chapterID = ? AND C.ChapterNumber order by C.ChapterNumber desc",
+      "SELECT C.chapterID, ComicTitle, comicID, ChapterNumber, ChapterName, pages, chapterDate, CoverImage FROM chapters C inner join(select id, CoverImage from comics) Comic on C.comicID = Comic.id WHERE C.ComicTitle = ? AND Comic.id = ? AND C.chapterID = ? AND C.ChapterNumber = ? order by C.ChapterNumber desc",
       [comicName, id, chapterId, chptNum],
       (error, result) => {
         if (!error && result.length > 0) {
           return res.status(200).json(result[0]);
         } else {
+          console.log(`${comicName}, ${id}, ${chapterId}, ${chptNum}`);
+          console.log(result);
           console.log(error);
           res.status(200).json({ message: "Not Found" });
 

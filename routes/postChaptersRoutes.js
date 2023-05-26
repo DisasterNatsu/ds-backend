@@ -7,20 +7,6 @@ import { adminAuth } from "../middleware/adminAuth.js";
 import { ProcessImages } from "../middleware/ImageProcessing.js";
 
 const Router = express.Router();
-var whitelist = ["https://admin.disasterscans.com"];
-var corsOptions = {
-  origin: function (origin, callback) {
-    if (whitelist.indexOf(origin) !== -1) {
-      callback(null, true);
-    } else {
-      callback(new Error("Not allowed by CORS"));
-    }
-  },
-  preflightContinue: true,
-};
-
-Router.options("*", cors(corsOptions));
-
 Router.post(
   "/",
   adminAuth,

@@ -18,7 +18,7 @@ export const ProcessImages = (req, res, next) => {
       console.log(tempDir, files);
       if (err) {
         console.error(err);
-        res.sendStatus(500).json({ message: err.message });
+        res.status(500).json({ message: err.message });
         return;
       }
 

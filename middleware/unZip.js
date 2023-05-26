@@ -16,14 +16,7 @@ export const unZip = (req, res, next) => {
 
   const reqFiles = path.join(dir, req.file.filename);
 
-  const unZipFiles = decompress(originPath, dist, {
-    map: (file) => {
-      file.path = file.path;
-
-      return file;
-    },
-  }).then((files) => {
-    fs.rmdirSync(dir, { recursive: true });
+  const unZipFiles = decompress(originPath, dist).then((files) => {
     next();
   });
 };
