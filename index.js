@@ -12,7 +12,7 @@ import adminRoutes from "./routes/adminRoutes.js";
 import sitemapRoutes from "./routes/sitemapRoutes.js";
 
 const app = express();
-const origins = ["https://admin.disasterscans.com", "https://disasterscans.com", "http://localhost:3000"]
+const origins = ["https://admin.disasterscans.com", "https://disasterscans.com"]
 function Origin(origin, callback) {
   if (origins.indexOf(origin) !== -1 || !origin) { // disasterscans or no origin(postman etc..)
     callback(null, true)
