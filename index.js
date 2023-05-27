@@ -12,6 +12,21 @@ import adminRoutes from "./routes/adminRoutes.js";
 import sitemapRoutes from "./routes/sitemapRoutes.js";
 
 const app = express();
+const origins = ["https://admin.disasterscans.com", "https://disasterscans.com"]
+function Origin(origin, callback) {
+  if (origins.indexOf(origin) !== -1 || !origin) { // disasterscans or no origin(postman etc..)
+    callback(null, true)
+  }
+  else {
+    callback(new Error('Not allowed by CORS'))
+  }
+}
+const cors_options = {
+  origin: Origin,
+  optionsSuccessStatus: 200,
+};
+
+app.options('*', cors(cors_options))
 
 app.use("/public", express.static("./public"));
 
@@ -25,7 +40,7 @@ app.use(
 );
 app.use(express.json());
 
-app.use(cors());
+app.use(cors(cors_options));
 
 app.get("/", (req, res) => {
   res.send("Hello!");
