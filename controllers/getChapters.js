@@ -66,8 +66,6 @@ export const ChapterPages = (req, res) => {
         if (!error && result.length > 0) {
           return res.status(200).json(result[0]);
         } else {
-          console.log(`${comicName}, ${id}, ${chapterId}, ${chptNum}`);
-          console.log(result);
           console.log(error);
           res.status(200).json({ message: "Not Found" });
 
