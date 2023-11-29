@@ -18,3 +18,6 @@ Create Table admin(id INT NOT NULL AUTO_INCREMENT, Email varchar(100) NOT NULL, 
 
 
 ## This is the backend for the https://disasterscans.com I'm leaving the MySql tables if anyone wants to use it
+
+
+I'm using backBlaze for storage. If you want to use local storage you can use node.js fs module to handle the files and store them in the public directory and serve from local
