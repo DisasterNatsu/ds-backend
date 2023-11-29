@@ -15,3 +15,6 @@ CREATE TABLE chapters(chapterID INT NOT NULL, ComicTitle varchar(255), comicID v
 ```
 Create Table admin(id INT NOT NULL AUTO_INCREMENT, Email varchar(100) NOT NULL, UserName varchar(100) NOT NULL, Password varchar(255) NOT NULL, Primary Key(id));
 ```
+
+
+## This is the backend for the https://disasterscans.com I'm leaving the MySql tables if anyone wants to use it
